@@ -1,6 +1,7 @@
 package com.afforess.minecartmaniachestcontrol;
 
 import org.bukkit.block.Sign;
+import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaInventory;
@@ -23,14 +24,18 @@ public class InventoryUtils {
 		Item[] items = ItemUtils.getItemStringListToMaterial(lines, facing);
 		for (Item m : items) {
 			if (m != null) {
-				while (withdraw.contains(m)) {
+				int amount = m.getAmount();
+				while (withdraw.contains(m) && (m.isInfinite() || amount > 0) ) {
+					ItemStack item = withdraw.getItem(withdraw.first(m));
+					int toAdd = m.isInfinite() ? item.getAmount() : (item.getAmount() > amount ? amount : item.getAmount());
 					if (deposit == null) {
 						//do nothing, just remove it from the withdraw inventory
 					}
-					else if (!deposit.addItem(withdraw.getItem(withdraw.first(m)))) {
+					else if (!deposit.addItem(new ItemStack(item.getTypeId(), toAdd, item.getDurability()))) {
 						break;
 					}
-					withdraw.setItem(withdraw.first(m), null);
+					withdraw.removeItem(item.getTypeId(), toAdd, item.getDurability());
+					amount -= toAdd;
 					action = true;
 				}
 			}

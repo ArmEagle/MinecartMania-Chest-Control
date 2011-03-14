@@ -20,7 +20,6 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 		if (event.isPowered() && !event.isActionTaken()) {
 
 			MinecartManiaChest chest = event.getChest();
-			
 			Item minecartType = ChestUtils.getMinecartType(chest);
 			Location spawnLocation = ChestUtils.getSpawnLocationSignOverride(chest);
 			if (spawnLocation == null && MinecartUtils.validMinecartTrack(chest.getWorld(), chest.getX() - 1, chest.getY(), chest.getZ(), 2, DirectionUtils.CompassDirection.NORTH)){
@@ -40,7 +39,6 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 					CompassDirection direction = ChestUtils.getDirection(chest.getLocation(), spawnLocation);
 					MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawnLocation, minecartType, chest);
 					minecart.setMotion(direction, MinecartManiaWorld.getDoubleValue(MinecartManiaWorld.getConfigurationValue("Spawn At Speed")));
-					
 					event.setActionTaken(true);
 				}
 			}
