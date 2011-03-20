@@ -56,7 +56,7 @@ public abstract class ChestStorage {
 	}
 
 	public static boolean doChestStorage(MinecartManiaStorageCart minecart) {
-		ArrayList<Block> blockList = minecart.getParallelBlocks();
+		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getEntityDetectionRange());
 		boolean action = false;
 		
 		for (Block block : blockList) {
@@ -96,7 +96,7 @@ public abstract class ChestStorage {
 	
 	public static boolean doFurnaceStorage(MinecartManiaStorageCart minecart) {
 		boolean action = false;
-		ArrayList<Block> blockList = minecart.getParallelBlocks();
+		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getEntityDetectionRange());
 		for (Block block : blockList) {
 			if (block.getState() instanceof Furnace) {
 				MinecartManiaFurnace furnace = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)block.getState());
@@ -106,6 +106,7 @@ public abstract class ChestStorage {
 						String[] split = sign.getLine(i).split(":");
 						if (split.length < 2) continue;
 						split[0] = split[0].toLowerCase();
+						split[1] = StringUtils.join(split, 1, ":"); //rebuild list of items
 						Item[] materials = ItemUtils.getItemStringToMaterial(split[1]);
 						if (materials == null) continue;
 						for (Item m : materials) {
@@ -183,7 +184,7 @@ public abstract class ChestStorage {
 	}
 
 	public static void doItemCompression(MinecartManiaStorageCart minecart) {
-		ArrayList<Block> blockList = minecart.getParallelBlocks();
+		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getEntityDetectionRange());
 		for (Block block : blockList) {
 			if (block.getTypeId() == Item.WORKBENCH.getId()) {
 				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(block.getWorld(), block.getX(), block.getY(), block.getZ(), 2);
@@ -232,6 +233,58 @@ public abstract class ChestStorage {
 			}
 		}
 		return false;
+	}
+
+	public static void setMaximumItems(MinecartManiaStorageCart minecart) {
+		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+		for (Sign sign : signList) {
+			if (sign.getLine(0).toLowerCase().contains("max items")) {
+				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
+				Item[] items = ItemUtils.getItemStringListToMaterial(list);
+				for (Item item : items) {
+					if (!item.isInfinite()) {
+						minecart.setMaximumItem(item, item.getAmount());
+					}
+				}
+				sign.setLine(0, "[Max Items]");
+				if (!sign.getLine(1).isEmpty()) {
+					sign.setLine(1, StringUtils.addBrackets(sign.getLine(1)));
+				}
+				if (!sign.getLine(2).isEmpty()) {
+					sign.setLine(2, StringUtils.addBrackets(sign.getLine(2)));
+				}
+				if (!sign.getLine(3).isEmpty()) {
+					sign.setLine(3, StringUtils.addBrackets(sign.getLine(3)));
+				}
+				sign.update();
+			}
+		}
+	}
+	
+	public static void setMinimumItems(MinecartManiaStorageCart minecart) {
+		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
+		for (Sign sign : signList) {
+			if (sign.getLine(0).toLowerCase().contains("min items")) {
+				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
+				Item[] items = ItemUtils.getItemStringListToMaterial(list);
+				for (Item item : items) {
+					if (!item.isInfinite()) {
+						minecart.setMinimumItem(item, item.getAmount());
+					}
+				}
+				sign.setLine(0, "[Min Items]");
+				if (!sign.getLine(1).isEmpty()) {
+					sign.setLine(1, StringUtils.addBrackets(sign.getLine(1)));
+				}
+				if (!sign.getLine(2).isEmpty()) {
+					sign.setLine(2, StringUtils.addBrackets(sign.getLine(2)));
+				}
+				if (!sign.getLine(3).isEmpty()) {
+					sign.setLine(3, StringUtils.addBrackets(sign.getLine(3)));
+				}
+				sign.update();
+			}
+		}
 	}
 
 }

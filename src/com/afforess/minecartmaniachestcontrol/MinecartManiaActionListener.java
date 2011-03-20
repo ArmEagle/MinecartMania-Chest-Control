@@ -74,10 +74,25 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 				action = ChestStorage.doCollectParallel(minecart);
 			}
 			if (!action && minecart.isStorageMinecart()) {
-				ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
-				ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
-				ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
+				
+				//Efficiency. A faster way than pruning list of old blocks
+				int interval = 0;
+				if (minecart.getDataValue("Storage Interval") != null) {
+					interval = (Integer)minecart.getDataValue("Storage Interval");
+				}
+				if (interval > 0) {
+					minecart.setDataValue("Storage Interval", interval - 1);
+				}
+				else {
+					minecart.setDataValue("Storage Interval", minecart.getEntityDetectionRange());
+					ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
+					ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
+					ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
+				}
+
 				ChestStorage.doEmptyChestInventory((MinecartManiaStorageCart) minecart);
+				ChestStorage.setMaximumItems((MinecartManiaStorageCart) minecart);
+				ChestStorage.setMinimumItems((MinecartManiaStorageCart) minecart);
 			}
 			event.setActionTaken(action);
 		}
