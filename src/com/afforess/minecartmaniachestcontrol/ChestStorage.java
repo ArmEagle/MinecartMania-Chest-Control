@@ -106,49 +106,11 @@ public abstract class ChestStorage {
 						String[] split = sign.getLine(i).split(":");
 						if (split.length < 2) continue;
 						split[0] = split[0].toLowerCase();
-						split[1] = StringUtils.join(split, 1, ":"); //rebuild list of items
-						Item[] materials = ItemUtils.getItemStringToMaterial(split[1]);
-						if (materials == null) continue;
-						for (Item m : materials) {
-							MinecartManiaInventory withdraw = minecart;
-							MinecartManiaInventory deposit = furnace;	
-							int slot;
-							if (split[0].contains("fuel")) {
-								slot = 1;
-							}
-							else if (split[0].contains("smelt")) {
-								slot = 0;
-							}
-							//not sure why anyone would want to use this, but whatever
-							else if (split[0].contains("process")) {
-								slot = 2;
-							}
-							else {
-								continue;
-							}
-							if (withdraw.contains(m)) {
-								if (deposit.getItem(slot) == null) {
-									deposit.setItem(slot, withdraw.getItem(withdraw.first(m)));
-									withdraw.setItem(withdraw.first(m), null);
-									action = true;
-								}
-								//Merge stacks together
-								else if (m.equals(deposit.getItem(slot).getType())){
-									ItemStack item = withdraw.getItem(withdraw.first(m));
-									if (deposit.getItem(slot).getAmount() + item.getAmount() <= 64) {
-										deposit.setItem(slot, new ItemStack(item.getTypeId(), deposit.getItem(slot).getAmount() + item.getAmount(), item.getDurability()));
-										item = null;
-									}
-									else {
-										int diff = deposit.getItem(slot).getAmount() + item.getAmount() - 64;
-										deposit.setItem(slot, new ItemStack(item.getTypeId(), deposit.getItem(slot).getAmount() + item.getAmount(), item.getDurability()));
-										item = new ItemStack(item.getTypeId(), diff);
-									}
-									withdraw.setItem(withdraw.first(m), item);
-									action = true;
-								}
-							}
-						}
+						int slot;
+						if (split[0].contains("fuel")) slot = 1;
+						else if (split[0].contains("smelt")) slot = 0; 
+						else continue;
+						action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, sign.getLine(i));
 						sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
 					}
 					sign.update();
