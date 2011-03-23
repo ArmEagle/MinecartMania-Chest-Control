@@ -76,12 +76,13 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			if (!action && minecart.isStorageMinecart()) {
 				
 				//Efficiency. A faster way than pruning list of old blocks
-				int interval = 0;
+				int interval = 1;
 				if (minecart.getDataValue("Storage Interval") != null) {
 					interval = (Integer)minecart.getDataValue("Storage Interval");
 				}
+				interval--;
 				if (interval > 0) {
-					minecart.setDataValue("Storage Interval", interval - 1);
+					minecart.setDataValue("Storage Interval", interval);
 				}
 				else {
 					minecart.setDataValue("Storage Interval", minecart.getEntityDetectionRange());
