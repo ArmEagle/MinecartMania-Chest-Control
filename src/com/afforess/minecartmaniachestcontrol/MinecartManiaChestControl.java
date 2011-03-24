@@ -29,7 +29,7 @@ public class MinecartManiaChestControl extends JavaPlugin {
 			this.setEnabled(false);
 		}
 		else {	
-			MinecartManiaConfigurationParser.read(pdfFile.getName().replaceAll(" ","") + "Configuration.xml", MinecartManiaCore.dataDirectory, SettingList.config);
+			MinecartManiaConfigurationParser.read(pdfFile.getName().replaceAll(" ","") + "Configuration.xml", MinecartManiaCore.dataDirectory, new ChestControlSettingParser());
 	        getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, listener, Priority.High, this);
 	        log.info( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
 		}

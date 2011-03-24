@@ -38,7 +38,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 				if (chest.removeItem(minecartType.getId())) {
 					CompassDirection direction = ChestUtils.getDirection(chest.getLocation(), spawnLocation);
 					MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawnLocation, minecartType, chest);
-					minecart.setMotion(direction, MinecartManiaWorld.getDoubleValue(MinecartManiaWorld.getConfigurationValue("Spawn At Speed")));
+					minecart.setMotion(direction, MinecartManiaWorld.getDoubleValue(MinecartManiaWorld.getConfigurationValue("SpawnAtSpeed")));
 					event.setActionTaken(true);
 				}
 			}

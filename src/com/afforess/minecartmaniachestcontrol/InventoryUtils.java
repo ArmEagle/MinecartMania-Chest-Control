@@ -4,6 +4,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmaniacore.Item;
+import com.afforess.minecartmaniacore.MinecartManiaFurnace;
 import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
@@ -20,8 +21,15 @@ public class InventoryUtils {
 		String[] lines = new String[3];
 		for (int i = 1; i < 4; i++) {
 			lines[i-1] = sign.getLine(i);
-			if (!sign.getLine(i).trim().isEmpty())
+			if (!sign.getLine(i).trim().isEmpty()) {
 				sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
+			}
+			//Special case, exempt fuel and smelt commands on the same line from the transaction
+			if (sign.getLine(i).toLowerCase().contains("fuel") || sign.getLine(i).toLowerCase().contains("smelt")) {
+				if (withdraw instanceof MinecartManiaFurnace) {
+					lines[i-1] = "";
+				}
+			}
 		}
 		sign.update();
 
