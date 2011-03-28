@@ -64,23 +64,53 @@ public class InventoryUtils {
 			if (m != null) {
 				if (withdraw.contains(m)) {
 					if (deposit.getItem(slot) == null) {
-						deposit.setItem(slot, withdraw.getItem(withdraw.first(m)));
-						withdraw.setItem(withdraw.first(m), null);
+					    
+				        int required = (m.isInfinite() || m.getAmount() > 64) ? 64 : m.getAmount();
+				        int required_temp = required;
+				        while(withdraw.first(m) != -1 && required > 0) {
+				            int temp_slot = withdraw.first(m);
+				            ItemStack temp = withdraw.getItem(temp_slot);
+				            if(required-temp.getAmount() < 0) {
+				                temp.setAmount(temp.getAmount() - required);
+				                required = 0;
+				            } else {
+				                withdraw.setItem(temp_slot, null);
+				                required -= temp.getAmount();
+				            }
+				        }
+				        
+				        if(required > 0 && required < required_temp) {
+				            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()-required));
+				        } else if(required == 0) {
+				            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()));
+				        }
+
 						return true;
-					}
-					//Merge stacks together
-					if (m.equals(deposit.getItem(slot).getType())){
-						ItemStack item = withdraw.getItem(withdraw.first(m));
-						if (deposit.getItem(slot).getAmount() + item.getAmount() <= 64) {
-							deposit.setItem(slot, new ItemStack(item.getTypeId(), deposit.getItem(slot).getAmount() + item.getAmount(), item.getDurability()));
-							item = null;
-						}
-						else {
-							int diff = deposit.getItem(slot).getAmount() + item.getAmount() - 64;
-							deposit.setItem(slot, new ItemStack(item.getTypeId(), deposit.getItem(slot).getAmount() + item.getAmount(), item.getDurability()));
-							item = new ItemStack(item.getTypeId(), diff);
-						}
-						withdraw.setItem(withdraw.first(m), item);
+					}//Merge stacks together
+					else if (m.equals(deposit.getItem(slot).getType())){
+					    ItemStack current = deposit.getItem(slot);
+					    if(current.getAmount() >= m.getAmount())
+					        return true;
+					    
+					    int remaining = m.getAmount() - current.getAmount();
+					    int remaining_temp = remaining;
+					    while(withdraw.first(m) != -1 && remaining > 0) {
+                            int temp_slot = withdraw.first(m);
+                            ItemStack temp = withdraw.getItem(temp_slot);
+                            if(remaining-temp.getAmount() < 0) {
+                                temp.setAmount(temp.getAmount() - remaining);
+                                remaining = 0;
+                            } else {
+                                withdraw.setItem(temp_slot, null);
+                                remaining -= temp.getAmount();
+                            }
+                        }
+					    
+					    if(remaining > 0 && remaining < remaining_temp) {
+                            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()-remaining));
+                        } else if(remaining == 0) {
+                            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()));
+                        }
 						return true;
 					}
 				}

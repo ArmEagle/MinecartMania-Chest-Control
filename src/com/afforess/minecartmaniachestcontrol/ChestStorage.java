@@ -102,14 +102,16 @@ public abstract class ChestStorage {
 				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.minecart.getWorld(), block.getX(), block.getY(), block.getZ(), 1);
 				for (Sign sign : signList) {
 					for (int i = 0; i < 4; i++) {
-						String[] split = sign.getLine(i).split(":");
-						if (split.length < 2) continue;
-						split[0] = split[0].toLowerCase();
-						int slot;
-						if (split[0].contains("fuel")) slot = 1;
-						else if (split[0].contains("smelt")) slot = 0; 
-						else continue;
-						action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, sign.getLine(i));
+					    String line = sign.getLine(i);
+					    int slot = -1;
+					    if(line.contains("smelt")) slot = 0;
+					    else if(line.contains("fuel")) slot = 1;
+					    
+					    line = line.replace("smelt", "");
+					    line = line.replace("fuel", "");
+					    if(line.startsWith(":"))line = line.substring(1);
+					    
+						action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, line);
 						sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
 					}
 					sign.update();
@@ -155,7 +157,7 @@ public abstract class ChestStorage {
 							sign.setLine(i, "[Compress Items]");
 							sign.update();
 							//TODO handling for custom recipies?
-							Item[][] compressable = { {Item.IRON_INGOT, Item.GOLD_INGOT}, {Item.IRON_BLOCK , Item.GOLD_BLOCK} };
+							Item[][] compressable = { {Item.IRON_INGOT, Item.GOLD_INGOT, Item.LAPIS_LAZULI}, {Item.IRON_BLOCK , Item.GOLD_BLOCK, Item.LAPIS_BLOCK} };
 							int n = 0;
 							for (Item m : compressable[0]) {
 								int amt = 0;
