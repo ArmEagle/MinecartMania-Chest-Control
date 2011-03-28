@@ -62,7 +62,7 @@ public abstract class ChestStorage {
 		for (Block block : blockList) {
 			MinecartManiaInventory withdraw = (MinecartManiaInventory)minecart;
 			MinecartManiaInventory deposit = null;
-			
+
 			if (block.getState() instanceof Chest) {
 				deposit = MinecartManiaWorld.getMinecartManiaChest((Chest)block.getState());
 				//check for double chest
@@ -78,7 +78,6 @@ public abstract class ChestStorage {
 			}
 			if (deposit != null) {
 				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.minecart.getWorld(), block.getX(), block.getY(), block.getZ(), 1);
-				
 				for (Sign sign : signList) {
 					if (sign.getLine(0).toLowerCase().contains("collect items")) {
 						sign.setLine(0, "[Collect Items]");
