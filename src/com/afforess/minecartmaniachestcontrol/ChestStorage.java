@@ -110,9 +110,10 @@ public abstract class ChestStorage {
 					    line = line.replace("smelt", "");
 					    line = line.replace("fuel", "");
 					    if(line.startsWith(":"))line = line.substring(1);
-					    
-						action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, line);
-						sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
+					    if (slot != -1) {
+					    	action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, line);
+					    	sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
+					    }
 					}
 					sign.update();
 				}
