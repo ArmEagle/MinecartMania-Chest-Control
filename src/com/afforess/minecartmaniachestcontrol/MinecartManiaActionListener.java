@@ -35,7 +35,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 				spawnLocation = new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ() + 1);
 			}
 			if (spawnLocation != null && chest.contains(minecartType)) {
-				if (chest.removeItem(minecartType.getId())) {
+				if (chest.canSpawnMinecart() && chest.removeItem(minecartType.getId())) {
 					CompassDirection direction = ChestUtils.getDirection(chest.getLocation(), spawnLocation);
 					MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawnLocation, minecartType, chest);
 					minecart.setMotion(direction, MinecartManiaWorld.getDoubleValue(MinecartManiaWorld.getConfigurationValue("SpawnAtSpeed")));
@@ -76,16 +76,12 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			if (!action && minecart.isStorageMinecart()) {
 				
 				//Efficiency. A faster way than pruning list of old blocks
-				int interval = 1;
-				if (minecart.getDataValue("Storage Interval") != null) {
-					interval = (Integer)minecart.getDataValue("Storage Interval");
+				Location previous = null;
+				if (minecart.getDataValue("Previous Storage Location") != null) {
+					previous = (Location)minecart.getDataValue("Previous Storage Location");
 				}
-				interval--;
-				if (interval > 0) {
-					minecart.setDataValue("Storage Interval", interval);
-				}
-				else {
-					minecart.setDataValue("Storage Interval", minecart.getEntityDetectionRange());
+				if (previous == null || (int)Math.floor(previous.toVector().distance(minecart.minecart.getLocation().toVector())) > minecart.getRange() * 2) {
+					minecart.setDataValue("Previous Storage Location", minecart.minecart.getLocation());
 					ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
 					ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
 					ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);

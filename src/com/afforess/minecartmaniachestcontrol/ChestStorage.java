@@ -56,7 +56,7 @@ public abstract class ChestStorage {
 	}
 
 	public static boolean doChestStorage(MinecartManiaStorageCart minecart) {
-		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getEntityDetectionRange());
+		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		boolean action = false;
 		
 		for (Block block : blockList) {
@@ -95,7 +95,7 @@ public abstract class ChestStorage {
 	
 	public static boolean doFurnaceStorage(MinecartManiaStorageCart minecart) {
 		boolean action = false;
-		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getEntityDetectionRange());
+		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		for (Block block : blockList) {
 			if (block.getState() instanceof Furnace) {
 				MinecartManiaFurnace furnace = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)block.getState());
@@ -148,7 +148,7 @@ public abstract class ChestStorage {
 	}
 
 	public static void doItemCompression(MinecartManiaStorageCart minecart) {
-		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getEntityDetectionRange());
+		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		for (Block block : blockList) {
 			if (block.getTypeId() == Item.WORKBENCH.getId()) {
 				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(block.getWorld(), block.getX(), block.getY(), block.getZ(), 2);
