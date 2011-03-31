@@ -4,7 +4,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmaniacore.Item;
-import com.afforess.minecartmaniacore.MinecartManiaFurnace;
 import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
@@ -23,12 +22,6 @@ public class InventoryUtils {
 			lines[i-1] = sign.getLine(i);
 			if (!sign.getLine(i).trim().isEmpty()) {
 				sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
-			}
-			//Special case, exempt fuel and smelt commands on the same line from the transaction
-			if (sign.getLine(i).toLowerCase().contains("fuel") || sign.getLine(i).toLowerCase().contains("smelt")) {
-				if (withdraw instanceof MinecartManiaFurnace) {
-					lines[i-1] = "";
-				}
 			}
 		}
 		sign.update();
@@ -63,15 +56,18 @@ public class InventoryUtils {
 		for (Item m : items) {
 			if (m != null) {
 				if (withdraw.contains(m)) {
+					if (m.isInfinite()) m.setAmount(64);
+					short durability = withdraw.getItem(withdraw.first(m)).getDurability();
 					if (deposit.getItem(slot) == null) {
 					    
-				        int required = (m.isInfinite() || m.getAmount() > 64) ? 64 : m.getAmount();
+				        int required = m.getAmount();
 				        int required_temp = required;
 				        while(withdraw.first(m) != -1 && required > 0) {
 				            int temp_slot = withdraw.first(m);
 				            ItemStack temp = withdraw.getItem(temp_slot);
 				            if(required-temp.getAmount() < 0) {
 				                temp.setAmount(temp.getAmount() - required);
+				                withdraw.setItem(temp_slot, temp);
 				                required = 0;
 				            } else {
 				                withdraw.setItem(temp_slot, null);
@@ -80,14 +76,15 @@ public class InventoryUtils {
 				        }
 				        
 				        if(required > 0 && required < required_temp) {
-				            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()-required));
+				            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()-required,durability));
 				        } else if(required == 0) {
-				            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()));
+				            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount(),durability));
 				        }
 
 						return true;
 					}//Merge stacks together
 					else if (m.equals(deposit.getItem(slot).getType())){
+						
 					    ItemStack current = deposit.getItem(slot);
 					    if(current.getAmount() >= m.getAmount())
 					        return true;
@@ -99,6 +96,7 @@ public class InventoryUtils {
                             ItemStack temp = withdraw.getItem(temp_slot);
                             if(remaining-temp.getAmount() < 0) {
                                 temp.setAmount(temp.getAmount() - remaining);
+                                withdraw.setItem(temp_slot, temp);
                                 remaining = 0;
                             } else {
                                 withdraw.setItem(temp_slot, null);
@@ -107,9 +105,9 @@ public class InventoryUtils {
                         }
 					    
 					    if(remaining > 0 && remaining < remaining_temp) {
-                            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()-remaining));
+                            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()-remaining,durability));
                         } else if(remaining == 0) {
-                            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount()));
+                            deposit.setItem(slot, new ItemStack(m.toMaterial(),m.getAmount(),durability));
                         }
 						return true;
 					}

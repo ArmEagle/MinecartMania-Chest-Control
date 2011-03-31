@@ -14,12 +14,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.afforess.minecartmaniacore.MinecartManiaChest;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.config.MinecartManiaConfigurationParser;
 import com.afforess.minecartmaniacore.config.SettingParser;
 
 public class ChestControlSettingParser implements SettingParser{
-	private static final double version = 1.1;
+	private static final double version = 1.2;
 	
 	public boolean isUpToDate(Document document) {
 		try {
@@ -43,6 +44,11 @@ public class ChestControlSettingParser implements SettingParser{
 			list = document.getElementsByTagName(setting);
 			value = MinecartManiaConfigurationParser.toDouble(list.item(0).getChildNodes().item(0).getNodeValue(), 0.0);
 			MinecartManiaWorld.getConfiguration().put(setting, value);
+			
+			setting = "ChestDispenserSpawnDelay";
+			list = document.getElementsByTagName(setting);
+			value = MinecartManiaConfigurationParser.toInt(list.item(0).getChildNodes().item(0).getNodeValue(), 1000);
+			MinecartManiaChest.SPAWN_DELAY = (Integer) value;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -70,6 +76,12 @@ public class ChestControlSettingParser implements SettingParser{
 			setting = doc.createElement("SpawnAtSpeed");
 			Comment comment = doc.createComment("The speed that minecarts are spawned at. 0 by default. For reference, 0.6 is full speed (and the speed launchers launch at).");
 			setting.appendChild(doc.createTextNode("0.0"));
+			rootElement.appendChild(setting);
+			rootElement.insertBefore(comment,setting);
+			
+			setting = doc.createElement("ChestDispenserSpawnDelay");
+			comment = doc.createComment("The delay (in milliseconds. 1000ms = 1s) between each minecart spawned at a chest dispenser.");
+			setting.appendChild(doc.createTextNode("1000"));
 			rootElement.appendChild(setting);
 			rootElement.insertBefore(comment,setting);
 			
