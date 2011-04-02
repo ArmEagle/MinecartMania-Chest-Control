@@ -17,6 +17,9 @@ public class InventoryUtils {
 	
 	public static boolean doInventoryTransaction(MinecartManiaInventory withdraw, MinecartManiaInventory deposit, Sign sign, CompassDirection facing) {
 		boolean action = false;
+		if (withdraw == null || deposit == null) {
+			return action;
+		}
 		String[] lines = new String[3];
 		for (int i = 1; i < 4; i++) {
 			lines[i-1] = sign.getLine(i);

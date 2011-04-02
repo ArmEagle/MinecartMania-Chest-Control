@@ -3,6 +3,7 @@ package com.afforess.minecartmaniachestcontrol;
 import org.bukkit.Location;
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaChest;
+import com.afforess.minecartmaniacore.MinecartManiaCore;
 import com.afforess.minecartmaniacore.MinecartManiaMinecart;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
@@ -63,7 +64,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 	
 	public void onMinecartActionEvent(MinecartActionEvent event) {
 		if (!event.isActionTaken()) {
-			MinecartManiaMinecart minecart = event.getMinecart();
+			final MinecartManiaMinecart minecart = event.getMinecart();
 			
 			boolean action = false;
 			
@@ -80,11 +81,18 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 				if (minecart.getDataValue("Previous Storage Location") != null) {
 					previous = (Location)minecart.getDataValue("Previous Storage Location");
 				}
-				if (previous == null || (int)Math.floor(previous.toVector().distance(minecart.minecart.getLocation().toVector())) > minecart.getRange() * 2) {
+				if (previous == null || (int)Math.floor(previous.toVector().distance(minecart.minecart.getLocation().toVector())) > minecart.getRange() * 2 ||
+						previous.toVector().distance(minecart.minecart.getLocation().toVector()) < 0.6D) {
 					minecart.setDataValue("Previous Storage Location", minecart.minecart.getLocation());
-					ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
-					ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
-					ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
+					
+					Runnable task = new Runnable() {
+						public void run() {
+							ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
+							ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
+							ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
+						}
+					};
+					MinecartManiaCore.server.getScheduler().scheduleAsyncDelayedTask(MinecartManiaCore.instance, task);
 				}
 
 				ChestStorage.doEmptyChestInventory((MinecartManiaStorageCart) minecart);

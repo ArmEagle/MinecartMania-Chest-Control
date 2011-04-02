@@ -17,6 +17,7 @@ import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.MinecartManiaMinecart;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
+import com.afforess.minecartmaniacore.utils.BlockUtils;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
 import com.afforess.minecartmaniacore.utils.SignUtils;
 import com.afforess.minecartmaniacore.utils.StringUtils;
@@ -63,22 +64,23 @@ public abstract class ChestStorage {
 			MinecartManiaInventory withdraw = (MinecartManiaInventory)minecart;
 			MinecartManiaInventory deposit = null;
 
-			if (block.getState() instanceof Chest) {
-				deposit = MinecartManiaWorld.getMinecartManiaChest((Chest)block.getState());
-				//check for double chest
-				if (deposit != null && ((MinecartManiaChest) deposit).getNeighborChest() != null) {
-					deposit = new MinecartManiaDoubleChest((MinecartManiaChest) deposit, ((MinecartManiaChest) deposit).getNeighborChest());
-				}
-			}
-			else if (block.getState() instanceof Dispenser) {
-				deposit = MinecartManiaWorld.getMinecartManiaDispenser((Dispenser)block.getState());
-			}
-			else if (block.getState() instanceof Furnace) {
-				deposit = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)block.getState());
-			}
-			if (deposit != null) {
-				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.minecart.getWorld(), block.getX(), block.getY(), block.getZ(), 1);
-				for (Sign sign : signList) {
+			if (block.getState() instanceof Sign) {
+				Sign sign = (Sign)block.getState();
+				ArrayList<Block> list = BlockUtils.getAdjacentBlocks(block.getLocation(), 1);
+				for (Block loop : list) {
+					if (loop.getState() instanceof Chest) {
+						deposit = MinecartManiaWorld.getMinecartManiaChest((Chest)loop.getState());
+						//check for double chest
+						if (deposit != null && ((MinecartManiaChest) deposit).getNeighborChest() != null) {
+							deposit = new MinecartManiaDoubleChest((MinecartManiaChest) deposit, ((MinecartManiaChest) deposit).getNeighborChest());
+						}
+					}
+					else if (loop.getState() instanceof Dispenser) {
+						deposit = MinecartManiaWorld.getMinecartManiaDispenser((Dispenser)loop.getState());
+					}
+					else if (loop.getState() instanceof Furnace) {
+						deposit = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)loop.getState());
+					}
 					if (sign.getLine(0).toLowerCase().contains("collect items")) {
 						sign.setLine(0, "[Collect Items]");
 						action = InventoryUtils.doInventoryTransaction(withdraw, deposit, sign, minecart.getDirectionOfMotion());
@@ -88,6 +90,7 @@ public abstract class ChestStorage {
 						action = InventoryUtils.doInventoryTransaction(deposit, withdraw, sign, minecart.getDirectionOfMotion());
 					}
 				}
+				deposit = null;
 			}
 		}
 		return action;
