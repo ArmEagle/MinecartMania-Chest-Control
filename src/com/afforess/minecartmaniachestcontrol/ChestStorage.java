@@ -1,23 +1,17 @@
 package com.afforess.minecartmaniachestcontrol;
 
 import java.util.ArrayList;
-
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
+import com.afforess.minecartmaniacore.AbstractItem;
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaChest;
-import com.afforess.minecartmaniacore.MinecartManiaDoubleChest;
-import com.afforess.minecartmaniacore.MinecartManiaFurnace;
-import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.MinecartManiaMinecart;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.BlockUtils;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
 import com.afforess.minecartmaniacore.utils.SignUtils;
 import com.afforess.minecartmaniacore.utils.StringUtils;
@@ -56,74 +50,112 @@ public abstract class ChestStorage {
 		return false;
 	}
 
-	public static boolean doChestStorage(MinecartManiaStorageCart minecart) {
-		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
-		boolean action = false;
-		
-		for (Block block : blockList) {
-			MinecartManiaInventory withdraw = (MinecartManiaInventory)minecart;
-			MinecartManiaInventory deposit = null;
-
-			if (block.getState() instanceof Sign) {
-				Sign sign = (Sign)block.getState();
-				ArrayList<Block> list = BlockUtils.getAdjacentBlocks(block.getLocation(), 1);
-				for (Block loop : list) {
-					if (loop.getState() instanceof Chest) {
-						deposit = MinecartManiaWorld.getMinecartManiaChest((Chest)loop.getState());
-						//check for double chest
-						if (deposit != null && ((MinecartManiaChest) deposit).getNeighborChest() != null) {
-							deposit = new MinecartManiaDoubleChest((MinecartManiaChest) deposit, ((MinecartManiaChest) deposit).getNeighborChest());
-						}
-					}
-					else if (loop.getState() instanceof Dispenser) {
-						deposit = MinecartManiaWorld.getMinecartManiaDispenser((Dispenser)loop.getState());
-					}
-					else if (loop.getState() instanceof Furnace) {
-						deposit = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)loop.getState());
-					}
-					if (sign.getLine(0).toLowerCase().contains("collect items")) {
-						sign.setLine(0, "[Collect Items]");
-						action = InventoryUtils.doInventoryTransaction(withdraw, deposit, sign, minecart.getDirectionOfMotion());
-					}
-					else if (sign.getLine(0).toLowerCase().contains("deposit items")) {
-						sign.setLine(0, "[Deposit Items]");
-						action = InventoryUtils.doInventoryTransaction(deposit, withdraw, sign, minecart.getDirectionOfMotion());
-					}
-				}
-				deposit = null;
-			}
-		}
-		return action;
-	}
+//	public static boolean doChestStorage(MinecartManiaStorageCart minecart) {
+//		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
+//		boolean action = false;
+//		
+//		minecart.setDataValue("Direction Signs", new HashMap<Location, ArrayList<CompassDirection>>());
+//		
+//		for (Block block : blockList) {
+//			if (block.getState() instanceof Sign) {
+//				Sign sign = (Sign)block.getState();
+//				action = action || doChestStorage(minecart, sign);
+//			}	
+//		}
+//		return action;
+//	}
 	
-	public static boolean doFurnaceStorage(MinecartManiaStorageCart minecart) {
-		boolean action = false;
-		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
-		for (Block block : blockList) {
-			if (block.getState() instanceof Furnace) {
-				MinecartManiaFurnace furnace = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)block.getState());
-				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.minecart.getWorld(), block.getX(), block.getY(), block.getZ(), 1);
-				for (Sign sign : signList) {
-					for (int i = 0; i < 4; i++) {
-					    String line = sign.getLine(i);
-					    int slot = -1;
-					    if(line.contains("smelt")) slot = 0;
-					    else if(line.contains("fuel")) slot = 1;
-					    
-					    line = line.replace("smelt", "");
-					    line = line.replace("fuel", "");
-					    if(line.startsWith(":"))line = line.substring(1);
-					    if (slot != -1) {
-					    	action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, line);
-					    	sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
-					    }
-					}
-					sign.update();
-				}
-			}
-		}
-		return action;
-	}
+//	private static boolean doChestStorage(MinecartManiaStorageCart minecart, Sign sign) {
+//		boolean action = false;
+//		MinecartManiaInventory withdraw = (MinecartManiaInventory)minecart;
+//		MinecartManiaInventory deposit = null;
+//		ArrayList<Block> list = BlockUtils.getAdjacentBlocks(sign.getBlock().getLocation(), 1);
+//		for (Block loop : list) {
+//			
+//			if (loop.getState() instanceof Chest) {
+//				deposit = MinecartManiaWorld.getMinecartManiaChest((Chest)loop.getState());
+//				//check for double chest
+//				if (deposit != null && ((MinecartManiaChest) deposit).getNeighborChest() != null) {
+//					deposit = new MinecartManiaDoubleChest((MinecartManiaChest) deposit, ((MinecartManiaChest) deposit).getNeighborChest());
+//				}
+//			}
+//			else if (loop.getState() instanceof Dispenser) {
+//				deposit = MinecartManiaWorld.getMinecartManiaDispenser((Dispenser)loop.getState());
+//			}
+//			else if (loop.getState() instanceof Furnace) {
+//				deposit = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)loop.getState());
+//				
+//			}
+//			if (sign.getLine(0).toLowerCase().contains("collect items")) {
+//				sign.setLine(0, "[Collect Items]");
+//				action = InventoryUtils.doInventoryTransaction(withdraw, deposit, sign, minecart.getDirectionOfMotion());
+//			}
+//			else if (sign.getLine(0).toLowerCase().contains("deposit items")) {
+//				sign.setLine(0, "[Deposit Items]");
+//				action = InventoryUtils.doInventoryTransaction(deposit, withdraw, sign, minecart.getDirectionOfMotion());
+//			}
+//		}
+//
+//		if (isConditionalDirection(sign)) {
+//			@SuppressWarnings("unchecked")
+//			HashMap<Location, ArrayList<CompassDirection>> recent = (HashMap<Location, ArrayList<CompassDirection>>) minecart.getDataValue("Direction Signs");
+//			ArrayList<CompassDirection> direction = new ArrayList<CompassDirection>();
+//			direction.add(minecart.getDirectionOfMotion());
+//			recent.put(sign.getBlock().getLocation(), direction);
+//		}
+//		return action;
+//	}
+	
+//	public static void updateConditionalCollectionStorage(MinecartManiaStorageCart minecart) {
+//		@SuppressWarnings("unchecked")
+//		HashMap<Location, ArrayList<CompassDirection>> recent = (HashMap<Location, ArrayList<CompassDirection>>) minecart.getDataValue("Direction Signs");
+//		if (recent != null) {
+//			Iterator<Entry<Location, ArrayList<CompassDirection>>> i = recent.entrySet().iterator();
+//			while(i.hasNext()) {
+//				Entry<Location, ArrayList<CompassDirection>> e = i.next();
+//				if (e.getKey().getBlock().getState() instanceof Sign) {
+//					if (!e.getValue().contains(minecart.getDirectionOfMotion())) {
+//						doChestStorage(minecart, (Sign)e.getKey().getBlock().getState());
+//					}
+//				}
+//			}
+//		}
+//	}
+	
+//	private static boolean isConditionalDirection(Sign sign) {
+//		return sign.getLine(1).contains("+") || sign.getLine(2).contains("+") || sign.getLine(3).contains("+");
+//	}
+	
+//	public static boolean doFurnaceStorage(MinecartManiaStorageCart minecart) {
+//		boolean action = false;
+//		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
+//		for (Block block : blockList) {
+//			if (block.getState() instanceof Furnace) {
+//				MinecartManiaFurnace furnace = MinecartManiaWorld.getMinecartManiaFurnace((Furnace)block.getState());
+//				System.out.println(furnace.getContents());
+//				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart.minecart.getWorld(), block.getX(), block.getY(), block.getZ(), 1);
+//				for (Sign sign : signList) {
+//					for (int i = 0; i < 4; i++) {
+//					    String line = sign.getLine(i).toLowerCase();
+//					    int slot = -1;
+//					    if(line.contains("smelt")) slot = 0;
+//					    else if(line.contains("fuel")) slot = 1;
+//					    
+//					    line = line.replace("smelt", "");
+//					    line = line.replace("fuel", "");
+//					    if(line.startsWith(":"))line = line.substring(1);
+//					    if (slot != -1) {
+//					    	System.out.println(line);
+//					    	action = InventoryUtils.doFurnaceTransaction(minecart, furnace, slot, line);
+//					    	sign.setLine(i, StringUtils.addBrackets(sign.getLine(i)));
+//					    }
+//					}
+//					sign.update();
+//				}
+//			}
+//		}
+//		return action;
+//	}
 	
 	public static boolean doCollectParallel(MinecartManiaMinecart minecart) {
 		ArrayList<Block> blockList = minecart.getParallelBlocks();
@@ -196,7 +228,7 @@ public abstract class ChestStorage {
 		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
 		for (Sign sign : signList) {
 			if (sign.getLine(0).toLowerCase().contains("trash items")) {
-				return InventoryUtils.doInventoryTransaction(minecart, null, sign, minecart.getDirectionOfMotion());
+				//return InventoryUtils.doInventoryTransaction(minecart, null, sign, minecart.getDirectionOfMotion());
 			}
 		}
 		return false;
@@ -207,10 +239,10 @@ public abstract class ChestStorage {
 		for (Sign sign : signList) {
 			if (sign.getLine(0).toLowerCase().contains("max items")) {
 				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
-				Item[] items = ItemUtils.getItemStringListToMaterial(list);
-				for (Item item : items) {
+				AbstractItem[] items = ItemUtils.getItemStringListToMaterial(list);
+				for (AbstractItem item : items) {
 					if (!item.isInfinite()) {
-						minecart.setMaximumItem(item, item.getAmount());
+						minecart.setMaximumItem(item.type(), item.getAmount());
 					}
 				}
 				sign.setLine(0, "[Max Items]");
@@ -233,10 +265,10 @@ public abstract class ChestStorage {
 		for (Sign sign : signList) {
 			if (sign.getLine(0).toLowerCase().contains("min items")) {
 				String[] list = {sign.getLine(1), sign.getLine(2), sign.getLine(3) };
-				Item[] items = ItemUtils.getItemStringListToMaterial(list);
-				for (Item item : items) {
+				AbstractItem[] items = ItemUtils.getItemStringListToMaterial(list);
+				for (AbstractItem item : items) {
 					if (!item.isInfinite()) {
-						minecart.setMinimumItem(item, item.getAmount());
+						minecart.setMinimumItem(item.type(), item.getAmount());
 					}
 				}
 				sign.setLine(0, "[Min Items]");

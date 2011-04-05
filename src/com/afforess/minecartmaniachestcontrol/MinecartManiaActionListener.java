@@ -1,15 +1,18 @@
 package com.afforess.minecartmaniachestcontrol;
 
 import org.bukkit.Location;
+
+import com.afforess.minecartmaniachestcontrol.itemcontainer.ItemCollectionManager;
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaChest;
-import com.afforess.minecartmaniacore.MinecartManiaCore;
 import com.afforess.minecartmaniacore.MinecartManiaMinecart;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.event.ChestPoweredEvent;
 import com.afforess.minecartmaniacore.event.MinecartActionEvent;
+import com.afforess.minecartmaniacore.event.MinecartDirectionChangeEvent;
 import com.afforess.minecartmaniacore.event.MinecartManiaListener;
+import com.afforess.minecartmaniacore.event.MinecartMotionStopEvent;
 import com.afforess.minecartmaniacore.event.MinecartNearEntityEvent;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.MinecartUtils;
@@ -85,21 +88,33 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 						previous.toVector().distance(minecart.minecart.getLocation().toVector()) < 0.6D) {
 					minecart.setDataValue("Previous Storage Location", minecart.minecart.getLocation());
 					
-					Runnable task = new Runnable() {
-						public void run() {
-							ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
-							ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
-							ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
-						}
-					};
-					MinecartManiaCore.server.getScheduler().scheduleAsyncDelayedTask(MinecartManiaCore.instance, task);
+					//ChestStorage.doChestStorage((MinecartManiaStorageCart) minecart);
+					//ChestStorage.doFurnaceStorage((MinecartManiaStorageCart) minecart);
+					ItemCollectionManager.processItemContainer((MinecartManiaStorageCart)event.getMinecart());
+					ItemCollectionManager.createItemContainers((MinecartManiaStorageCart)event.getMinecart());
+					ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
 				}
-
+				
 				ChestStorage.doEmptyChestInventory((MinecartManiaStorageCart) minecart);
 				ChestStorage.setMaximumItems((MinecartManiaStorageCart) minecart);
 				ChestStorage.setMinimumItems((MinecartManiaStorageCart) minecart);
 			}
 			event.setActionTaken(action);
+		}
+	}
+	
+	public void onMinecartDirectionChangeEvent(MinecartDirectionChangeEvent event) {
+		if (event.getMinecart().isStorageMinecart()) {
+			ItemCollectionManager.updateContainerDirections((MinecartManiaStorageCart)event.getMinecart());
+			//ChestStorage.updateConditionalCollectionStorage((MinecartManiaStorageCart) event.getMinecart());
+		}
+	}
+	
+	public void onMinecartMotionStopEvent(MinecartMotionStopEvent event) {
+		if (event.getMinecart().isStorageMinecart()) {
+			ItemCollectionManager.processItemContainer((MinecartManiaStorageCart)event.getMinecart());
+			ItemCollectionManager.createItemContainers((MinecartManiaStorageCart)event.getMinecart());
+			event.getMinecart().setDataValue("Previous Storage Location", event.getMinecart().minecart.getLocation());
 		}
 	}
 
