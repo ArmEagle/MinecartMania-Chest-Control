@@ -16,6 +16,7 @@ import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
+import com.afforess.minecartmaniacore.utils.StringUtils;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.SignUtils;
 
@@ -68,18 +69,21 @@ public class ItemCollectionManager {
 				for (int line = 1; line < 4; line++) {
 					String text = ((Sign)location.getBlock().getState()).getLine(line);
 					if (!text.isEmpty() && !isFurnaceFuelLine(text) && !isFurnaceSmeltLine(text)) {
-						ItemContainer temp;
+						ItemContainer temp = null;
 						if (collection) {
 							temp = new ItemCollectionContainer(inventory, text, direction);
 						}
-						//special handling of depositing items from furnaces
-						else if (inventory instanceof MinecartManiaFurnace) {
-							temp = new FurnaceDepositItemContainer((MinecartManiaFurnace)inventory, text, direction);
-						}
 						else {
-							temp = new ItemDepositContainer(inventory, text, direction);
+							if (inventory instanceof MinecartManiaFurnace) {
+								temp = new FurnaceDepositItemContainer((MinecartManiaFurnace)inventory, text, direction);
+							}
+							else {
+								temp = new ItemDepositContainer(inventory, text, direction);
+							}
 						}
-						containers.add(temp);
+						if (temp != null) {
+							containers.add(temp);
+						}
 					}
 				}
 			}
@@ -117,6 +121,13 @@ public class ItemCollectionManager {
 		}
 		return containers;
 	}
+	
+	private static void bracketizeSign(Sign sign) {
+		for (int line = 0; line < 4; line++) {
+			if (!sign.getLine(line).trim().isEmpty())
+				sign.setLine(line, StringUtils.addBrackets(StringUtils.removeBrackets(sign.getLine(line))));
+		}
+	}
 
 	
 	public static void createItemContainers(MinecartManiaStorageCart minecart) {
@@ -124,12 +135,15 @@ public class ItemCollectionManager {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		for (Sign sign : signs) {
 			if (isItemCollectionSign(sign)) {
+				bracketizeSign(sign);
 				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), true));
 			}
 			else if (isItemDepositSign(sign)) {
+				bracketizeSign(sign);
 				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), false));
 			}
 			else if (isTrashItemSign(sign)) {
+				bracketizeSign(sign);
 				containers.addAll(getTrashItemContainers(sign.getBlock().getLocation(), minecart.getDirection()));
 			}
 			containers.addAll(getFurnaceContainers(sign.getBlock().getLocation(), minecart.getDirection()));
