@@ -15,6 +15,7 @@ import com.afforess.minecartmaniacore.MinecartManiaFurnace;
 import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
+import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
@@ -63,9 +64,15 @@ public class ItemCollectionManager {
 	public static ArrayList<ItemContainer> getItemContainers(Location location, CompassDirection direction, boolean collection) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		ArrayList<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
+		ArrayList<Block> toSkip = new ArrayList<Block>();
 		for (Block block : blocks) {
-			if (getMinecartManiaInventory(block) != null) {
+			if (getMinecartManiaInventory(block) != null && !toSkip.contains(block)) {
 				MinecartManiaInventory inventory = getMinecartManiaInventory(block);
+				if (inventory instanceof MinecartManiaDoubleChest) {
+					MinecartManiaChest other = MinecartManiaChest.getNeighborChest(block.getWorld(), block.getX(), block.getY(), block.getZ());
+					toSkip.add(other.getLocation().getBlock());
+				}
+				
 				for (int line = 1; line < 4; line++) {
 					String text = ((Sign)location.getBlock().getState()).getLine(line);
 					if (!text.isEmpty() && !isFurnaceFuelLine(text) && !isFurnaceSmeltLine(text)) {
@@ -131,18 +138,21 @@ public class ItemCollectionManager {
 
 	
 	public static void createItemContainers(MinecartManiaStorageCart minecart) {
-		ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, minecart.getRange()+1);
+		ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, minecart.getRange());
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		for (Sign sign : signs) {
 			if (isItemCollectionSign(sign)) {
+				MinecartManiaLogger.getInstance().debug("Creating Item Collect");
 				bracketizeSign(sign);
 				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), true));
 			}
 			else if (isItemDepositSign(sign)) {
+				MinecartManiaLogger.getInstance().debug("Creating Item Deposit");
 				bracketizeSign(sign);
 				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), false));
 			}
 			else if (isTrashItemSign(sign)) {
+				MinecartManiaLogger.getInstance().debug("Creating Item Trash");
 				bracketizeSign(sign);
 				containers.addAll(getTrashItemContainers(sign.getBlock().getLocation(), minecart.getDirection()));
 			}
