@@ -39,7 +39,7 @@ public class FurnaceSmeltContainer extends GenericItemContainer implements ItemC
 					if (furnace.getItem(SLOT) != null && !item.equals(Item.getItem(furnace.getItem(SLOT)))) {
 						continue;
 					}
-					int toAdd = item.getAmount();
+					int toAdd = Math.min(item.getAmount(), withdraw.amount(item.type()));
 					if (furnace.getItem(SLOT) != null) {
 						toAdd -= furnace.getItem(SLOT).getAmount();
 						item.setAmount(furnace.getItem(SLOT).getAmount() + toAdd);
