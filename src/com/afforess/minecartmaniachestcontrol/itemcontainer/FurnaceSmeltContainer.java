@@ -41,7 +41,7 @@ public class FurnaceSmeltContainer extends GenericItemContainer implements ItemC
 					}
 					int toAdd = Math.min(item.getAmount(), withdraw.amount(item.type()));
 					if (furnace.getItem(SLOT) != null) {
-						toAdd -= furnace.getItem(SLOT).getAmount();
+						toAdd = Math.min(64 - furnace.getItem(SLOT).getAmount(), toAdd);
 						item.setAmount(furnace.getItem(SLOT).getAmount() + toAdd);
 					}
 					if (withdraw.contains(item.type()) && withdraw.canRemoveItem(item.getId(), toAdd, data)) {

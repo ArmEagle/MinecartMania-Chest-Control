@@ -1,5 +1,5 @@
 name: MinecartManiaChestControl
 main: com.afforess.minecartmaniachestcontrol.MinecartManiaChestControl
-version: 1.09a
+version: 1.09c
 author: Afforess
 depend: [MinecartManiaCore]

@@ -20,7 +20,7 @@ import com.afforess.minecartmaniacore.config.MinecartManiaConfigurationParser;
 import com.afforess.minecartmaniacore.config.SettingParser;
 
 public class ChestControlSettingParser implements SettingParser{
-	private static final double version = 1.2;
+	private static final double version = 1.3;
 	
 	public boolean isUpToDate(Document document) {
 		try {
@@ -49,6 +49,11 @@ public class ChestControlSettingParser implements SettingParser{
 			list = document.getElementsByTagName(setting);
 			value = MinecartManiaConfigurationParser.toInt(list.item(0).getChildNodes().item(0).getNodeValue(), 1000);
 			MinecartManiaChest.SPAWN_DELAY = (Integer) value;
+			
+			setting = "ItemCollectionRange";
+			list = document.getElementsByTagName(setting);
+			value = MinecartManiaConfigurationParser.toInt(list.item(0).getChildNodes().item(0).getNodeValue(), 1000);
+			MinecartManiaWorld.getConfiguration().put(setting, value);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -82,6 +87,12 @@ public class ChestControlSettingParser implements SettingParser{
 			setting = doc.createElement("ChestDispenserSpawnDelay");
 			comment = doc.createComment("The delay (in milliseconds. 1000ms = 1s) between each minecart spawned at a chest dispenser.");
 			setting.appendChild(doc.createTextNode("1000"));
+			rootElement.appendChild(setting);
+			rootElement.insertBefore(comment,setting);
+			
+			setting = doc.createElement("ItemCollectionRange");
+			comment = doc.createComment("The range (radius) in blocks a minecart will search for item collection, item depositing, or furnace signs");
+			setting.appendChild(doc.createTextNode("1"));
 			rootElement.appendChild(setting);
 			rootElement.insertBefore(comment,setting);
 			

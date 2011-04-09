@@ -24,8 +24,8 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 		if (event.isPowered() && !event.isActionTaken()) {
 
 			MinecartManiaChest chest = event.getChest();
-			Item minecartType = ChestUtils.getMinecartType(chest);
-			Location spawnLocation = ChestUtils.getSpawnLocationSignOverride(chest);
+			Item minecartType = SignCommands.getMinecartType(chest);
+			Location spawnLocation = SignCommands.getSpawnLocationSignOverride(chest);
 			if (spawnLocation == null && MinecartUtils.validMinecartTrack(chest.getWorld(), chest.getX() - 1, chest.getY(), chest.getZ(), 2, DirectionUtils.CompassDirection.NORTH)){
 				spawnLocation = new Location(chest.getWorld(), chest.getX() - 1, chest.getY(), chest.getZ());
 			}
@@ -40,7 +40,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			}
 			if (spawnLocation != null && chest.contains(minecartType)) {
 				if (chest.canSpawnMinecart() && chest.removeItem(minecartType.getId())) {
-					CompassDirection direction = ChestUtils.getDirection(chest.getLocation(), spawnLocation);
+					CompassDirection direction = SignCommands.getDirection(chest.getLocation(), spawnLocation);
 					MinecartManiaMinecart minecart = MinecartManiaWorld.spawnMinecart(spawnLocation, minecartType, chest);
 					minecart.setMotion(direction, MinecartManiaWorld.getDoubleValue(MinecartManiaWorld.getConfigurationValue("SpawnAtSpeed")));
 					event.setActionTaken(true);
@@ -78,13 +78,14 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 				action = ChestStorage.doCollectParallel(minecart);
 			}
 			if (!action && minecart.isStorageMinecart()) {
+				int range = ((MinecartManiaStorageCart)minecart).getItemRange();
 				
 				//Efficiency. A faster way than pruning list of old blocks
 				Location previous = null;
 				if (minecart.getDataValue("Previous Storage Location") != null) {
 					previous = (Location)minecart.getDataValue("Previous Storage Location");
 				}
-				if (previous == null || (int)Math.floor(previous.toVector().distance(minecart.minecart.getLocation().toVector())) > minecart.getRange() * 2 ||
+				if (previous == null || (int)Math.floor(previous.toVector().distance(minecart.minecart.getLocation().toVector())) > range * 2 ||
 						previous.toVector().distance(minecart.minecart.getLocation().toVector()) < 0.6D) {
 					minecart.setDataValue("Previous Storage Location", minecart.minecart.getLocation());
 					
