@@ -2,6 +2,7 @@ package com.afforess.minecartmaniachestcontrol.itemcontainer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -20,10 +21,10 @@ import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
+import com.afforess.minecartmaniacore.utils.ComparableLocation;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
 import com.afforess.minecartmaniacore.utils.StringUtils;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
-import com.afforess.minecartmaniacore.utils.SignUtils;
 
 public class ItemCollectionManager {
 	
@@ -100,7 +101,7 @@ public class ItemCollectionManager {
 	public static ArrayList<ItemContainer> getItemContainers(Location location, CompassDirection direction, boolean collection) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
 		ArrayList<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
-		ArrayList<Block> toSkip = new ArrayList<Block>();
+		HashSet<Block> toSkip = new HashSet<Block>();
 		for (Block block : blocks) {
 			if (getMinecartManiaInventory(block) != null && !toSkip.contains(block)) {
 				MinecartManiaInventory inventory = getMinecartManiaInventory(block);
@@ -113,16 +114,16 @@ public class ItemCollectionManager {
 					if (!text.isEmpty() && !isFurnaceFuelLine(text) && !isFurnaceSmeltLine(text)) {
 						ItemContainer temp = null;
 						if (collection) {
-							MinecartManiaLogger.getInstance().debug("Created Item Collection Container");
+							MinecartManiaLogger.getInstance().debug("Found Inventory To Collect From");
 							temp = new ItemCollectionContainer(inventory, text, direction);
 						}
 						else {
 							if (inventory instanceof MinecartManiaFurnace) {
-								MinecartManiaLogger.getInstance().debug("Creating Furnance Deposit Container");
+								MinecartManiaLogger.getInstance().debug("Found Furnace To Deposit From");
 								temp = new FurnaceDepositItemContainer((MinecartManiaFurnace)inventory, text, direction);
 							}
 							else {
-								MinecartManiaLogger.getInstance().debug("Creating Item Deposit Container");
+								MinecartManiaLogger.getInstance().debug("Found Inventory To Deposit From");
 								temp = new ItemDepositContainer(inventory, text, direction);
 							}
 						}
@@ -175,24 +176,22 @@ public class ItemCollectionManager {
 	}
 
 	
-	public static void createItemContainers(MinecartManiaStorageCart minecart) {
-		int range = minecart.getItemRange();
-		MinecartManiaLogger.getInstance().debug("Creating Item Containers, Searching in a range of " + range);
-		ArrayList<Sign> signs = SignUtils.getAdjacentSignList(minecart, range);
+	public static void createItemContainers(MinecartManiaStorageCart minecart, HashSet<ComparableLocation> available) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
-		for (Sign sign : signs) {
+		for (Location loc : available) {
+			Sign sign = (Sign)loc.getBlock().getState();
 			if (isItemCollectionSign(sign)) {
-				MinecartManiaLogger.getInstance().debug("Creating Item Collection Containers");
+				MinecartManiaLogger.getInstance().debug("Found Collect Item Sign");
 				bracketizeSign(sign);
 				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), true));
 			}
 			else if (isItemDepositSign(sign)) {
-				MinecartManiaLogger.getInstance().debug("Creating Item Deposit Containers");
+				MinecartManiaLogger.getInstance().debug("Found Deposit Item Sign");
 				bracketizeSign(sign);
 				containers.addAll(getItemContainers(sign.getBlock().getLocation(), minecart.getDirection(), false));
 			}
 			else if (isTrashItemSign(sign)) {
-				MinecartManiaLogger.getInstance().debug("Creating Item Trash Containers");
+				MinecartManiaLogger.getInstance().debug("Found Trash Item Sign");
 				bracketizeSign(sign);
 				containers.addAll(getTrashItemContainers(sign.getBlock().getLocation(), minecart.getDirection()));
 			}

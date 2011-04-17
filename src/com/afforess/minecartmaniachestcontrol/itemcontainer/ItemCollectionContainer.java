@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmaniacore.AbstractItem;
 import com.afforess.minecartmaniacore.MinecartManiaInventory;
+import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.ListUtils;
 
@@ -18,6 +19,7 @@ public class ItemCollectionContainer extends GenericItemContainer implements Ite
 	}
 	
 	public void doCollection(MinecartManiaInventory withdraw) {
+		MinecartManiaLogger.getInstance().debug("Processing Collection Sign. Text: "  + this.line);
 		@SuppressWarnings("unchecked")
 		ArrayList<AbstractItem> rawList = (ArrayList<AbstractItem>) ListUtils.toArrayList(Arrays.asList(getRawItemList()));
 		for (CompassDirection direction : directions) {

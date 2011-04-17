@@ -40,6 +40,7 @@ public class FurnaceFuelContainer extends GenericItemContainer implements ItemCo
 						continue;
 					}
 					int toAdd = Math.min(item.getAmount(), withdraw.amount(item.type()));
+					item.setAmount(toAdd);
 					if (furnace.getItem(SLOT) != null) {
 						toAdd = Math.min(64 - furnace.getItem(SLOT).getAmount(), toAdd);
 						item.setAmount(furnace.getItem(SLOT).getAmount() + toAdd);
