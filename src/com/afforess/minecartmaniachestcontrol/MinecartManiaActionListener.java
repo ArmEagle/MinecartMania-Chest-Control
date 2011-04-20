@@ -17,7 +17,6 @@ import com.afforess.minecartmaniacore.event.ChestPoweredEvent;
 import com.afforess.minecartmaniacore.event.MinecartActionEvent;
 import com.afforess.minecartmaniacore.event.MinecartDirectionChangeEvent;
 import com.afforess.minecartmaniacore.event.MinecartManiaListener;
-import com.afforess.minecartmaniacore.event.MinecartNearEntityEvent;
 import com.afforess.minecartmaniacore.utils.ComparableLocation;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
@@ -54,23 +53,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			}
 		}
 	}
-	
-	public void onMinecartNearEntityEvent(MinecartNearEntityEvent event) {
-		if (event.isActionTaken()) {
-			return;
-		}
-		if (event.getEntity() instanceof org.bukkit.entity.Item) {
-			org.bukkit.entity.Item item = (org.bukkit.entity.Item)event.getEntity();
-			if (event.getMinecart().isStorageMinecart()) {
-				MinecartManiaStorageCart minecart = (MinecartManiaStorageCart) event.getMinecart();
-				if (minecart.addItem(item.getItemStack())) {
-					item.remove();
-					event.setActionTaken(true);
-				}
-			}
-		}
-	}
-	
+
 	public void onMinecartActionEvent(MinecartActionEvent event) {
 		if (!event.isActionTaken()) {
 			final MinecartManiaMinecart minecart = event.getMinecart();
