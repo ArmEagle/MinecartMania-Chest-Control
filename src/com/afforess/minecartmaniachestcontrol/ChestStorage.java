@@ -3,18 +3,15 @@ package com.afforess.minecartmaniachestcontrol;
 import java.util.ArrayList;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmaniacore.AbstractItem;
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaChest;
 import com.afforess.minecartmaniacore.MinecartManiaMinecart;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
-import com.afforess.minecartmaniacore.utils.ItemUtils;
+import com.afforess.minecartmaniacore.signs.Sign;
 import com.afforess.minecartmaniacore.utils.SignUtils;
-import com.afforess.minecartmaniacore.utils.StringUtils;
 
 public abstract class ChestStorage {
 	
@@ -55,12 +52,11 @@ public abstract class ChestStorage {
 		for (Block block : blockList) {
 			if (block.getState() instanceof Chest) {
 				MinecartManiaChest chest = MinecartManiaWorld.getMinecartManiaChest((Chest)block.getState());
-				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ(), 1);
+				ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 1);
 				for (Sign sign : signList) {
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < sign.getNumLines(); i++) {
 						if (sign.getLine(i).toLowerCase().contains("parallel")) {
 							sign.setLine(i, "[Parallel]");
-							sign.update();
 							if (!minecart.isMovingAway(block.getLocation())) {
 								if (chest.addItem(minecart.getType().getId())) {
 									minecart.kill(false);
@@ -79,12 +75,11 @@ public abstract class ChestStorage {
 		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		for (Block block : blockList) {
 			if (block.getTypeId() == Item.WORKBENCH.getId()) {
-				ArrayList<Sign> signList = SignUtils.getAdjacentSignList(block.getWorld(), block.getX(), block.getY(), block.getZ(), 2);
+				ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(block.getLocation(), 2);
 				for (Sign sign : signList) {
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < sign.getNumLines(); i++) {
 						if (sign.getLine(i).toLowerCase().contains("compress items")) { 
 							sign.setLine(i, "[Compress Items]");
-							sign.update();
 							//TODO handling for custom recipies?
 							Item[][] compressable = { {Item.IRON_INGOT, Item.GOLD_INGOT, Item.LAPIS_LAZULI}, {Item.IRON_BLOCK , Item.GOLD_BLOCK, Item.LAPIS_BLOCK} };
 							int n = 0;
@@ -116,7 +111,7 @@ public abstract class ChestStorage {
 			}
 		}
 	}
-	
+/*	
 	public static boolean doEmptyChestInventory(MinecartManiaStorageCart minecart) {
 		ArrayList<Sign> signList = SignUtils.getAdjacentSignList(minecart, 2);
 		for (Sign sign : signList) {
@@ -178,5 +173,5 @@ public abstract class ChestStorage {
 			}
 		}
 	}
-
+*/
 }

@@ -5,9 +5,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.bukkit.Location;
-import org.bukkit.block.Sign;
 
 import com.afforess.minecartmaniachestcontrol.itemcontainer.ItemCollectionManager;
+import com.afforess.minecartmaniachestcontrol.signs.MaximumItemAction;
+import com.afforess.minecartmaniachestcontrol.signs.MinimumItemAction;
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaChest;
 import com.afforess.minecartmaniacore.MinecartManiaMinecart;
@@ -17,6 +18,9 @@ import com.afforess.minecartmaniacore.event.ChestPoweredEvent;
 import com.afforess.minecartmaniacore.event.MinecartActionEvent;
 import com.afforess.minecartmaniacore.event.MinecartDirectionChangeEvent;
 import com.afforess.minecartmaniacore.event.MinecartManiaListener;
+import com.afforess.minecartmaniacore.event.MinecartManiaSignFoundEvent;
+import com.afforess.minecartmaniacore.signs.Sign;
+import com.afforess.minecartmaniacore.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.ComparableLocation;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
@@ -53,6 +57,19 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			}
 		}
 	}
+	
+	@Override
+	public void onMinecartManiaSignFoundEvent(MinecartManiaSignFoundEvent event) {
+		Sign sign = event.getSign();
+		SignAction test = new MaximumItemAction(sign);
+		if (test.valid(sign)) {
+			sign.addSignAction(test);
+		}
+		test = new MinimumItemAction(sign);
+		if (test.valid(sign)) {
+			sign.addSignAction(test);
+		}
+	}
 
 	public void onMinecartActionEvent(MinecartActionEvent event) {
 		if (!event.isActionTaken()) {
@@ -73,9 +90,6 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 				findSigns(locations);
 				ItemCollectionManager.createItemContainers((MinecartManiaStorageCart)event.getMinecart(), locations);
 				ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
-				ChestStorage.doEmptyChestInventory((MinecartManiaStorageCart) minecart);
-				ChestStorage.setMaximumItems((MinecartManiaStorageCart) minecart);
-				ChestStorage.setMinimumItems((MinecartManiaStorageCart) minecart);
 			}
 			event.setActionTaken(action);
 		}
@@ -129,7 +143,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 		Iterator<ComparableLocation> i = locations.iterator();
 		while (i.hasNext()) {
 			Location temp = i.next();
-			if (!(temp.getBlock().getState() instanceof Sign)) {
+			if (!(temp.getBlock().getState() instanceof org.bukkit.block.Sign)) {
 				i.remove();
 			}
 		}
