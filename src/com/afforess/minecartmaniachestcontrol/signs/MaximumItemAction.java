@@ -38,4 +38,14 @@ public class MaximumItemAction implements SignAction{
 		return false;
 	}
 
+	@Override
+	public String getName() {
+		return "maximumitemsign";
+	}
+
+	@Override
+	public String getFriendlyName() {
+		return "Maximum Item Sign";
+	}
+
 }

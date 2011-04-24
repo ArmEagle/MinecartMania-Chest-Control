@@ -38,4 +38,14 @@ public class MinimumItemAction implements SignAction{
 		return false;
 	}
 
+	@Override
+	public String getName() {
+		return "minimumitemsign";
+	}
+
+	@Override
+	public String getFriendlyName() {
+		return "Minimum Item Sign";
+	}
+
 }
