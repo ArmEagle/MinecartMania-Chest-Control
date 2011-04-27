@@ -1,6 +1,8 @@
 package com.afforess.minecartmaniachestcontrol;
 
 import java.util.ArrayList;
+
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.ItemStack;
@@ -11,9 +13,35 @@ import com.afforess.minecartmaniacore.MinecartManiaMinecart;
 import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.signs.Sign;
+import com.afforess.minecartmaniacore.utils.MinecartUtils;
 import com.afforess.minecartmaniacore.utils.SignUtils;
 
 public abstract class ChestStorage {
+	
+	public static Location getSpawnLocation(MinecartManiaChest chest) {
+		Block center = chest.getLocation().getBlock();
+		Location result = getAdjacentTrack(center);
+		if (result == null && chest.getNeighborChest() != null) {
+			result = getAdjacentTrack(chest.getNeighborChest().getLocation().getBlock());
+		}
+		return result;
+	}
+	
+	private static Location getAdjacentTrack(Block center) {
+		if (MinecartUtils.isTrack(center.getRelative(-1, 0, 0))) {
+			return center.getRelative(-1, 0, 0).getLocation();
+		}
+		if (MinecartUtils.isTrack(center.getRelative(0, 0, -1))) {
+			return center.getRelative(0, 0, -1).getLocation();
+		}
+		if (MinecartUtils.isTrack(center.getRelative(1, 0, 0))) {
+			return center.getRelative(1, 0, 0).getLocation();
+		}
+		if (MinecartUtils.isTrack(center.getRelative(0, 0, 1))) {
+			return center.getRelative(0, 0, 1).getLocation();
+		}
+		return null;
+	}
 	
 	public static boolean doMinecartCollection(MinecartManiaMinecart minecart) {
 		if (minecart.getBlockTypeAhead() != null) {

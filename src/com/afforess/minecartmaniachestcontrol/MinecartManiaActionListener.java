@@ -24,8 +24,6 @@ import com.afforess.minecartmaniacore.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.ComparableLocation;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
-import com.afforess.minecartmaniacore.utils.MinecartUtils;
-import com.afforess.minecartmaniacore.utils.DirectionUtils;
 
 public class MinecartManiaActionListener extends MinecartManiaListener{
 	
@@ -35,17 +33,8 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			MinecartManiaChest chest = event.getChest();
 			Item minecartType = SignCommands.getMinecartType(chest);
 			Location spawnLocation = SignCommands.getSpawnLocationSignOverride(chest);
-			if (spawnLocation == null && MinecartUtils.validMinecartTrack(chest.getWorld(), chest.getX() - 1, chest.getY(), chest.getZ(), 2, DirectionUtils.CompassDirection.NORTH)){
-				spawnLocation = new Location(chest.getWorld(), chest.getX() - 1, chest.getY(), chest.getZ());
-			}
-			if (spawnLocation == null && MinecartUtils.validMinecartTrack(chest.getWorld(), chest.getX() + 1, chest.getY(), chest.getZ(), 2, DirectionUtils.CompassDirection.SOUTH)){
-				spawnLocation = new Location(chest.getWorld(), chest.getX() + 1, chest.getY(), chest.getZ());
-			}
-			if (spawnLocation == null && MinecartUtils.validMinecartTrack(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ() - 1, 2, DirectionUtils.CompassDirection.EAST)){
-				spawnLocation = new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ() - 1);
-			}
-			if (spawnLocation == null && MinecartUtils.validMinecartTrack(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ() + 1, 2, DirectionUtils.CompassDirection.WEST)){
-				spawnLocation = new Location(chest.getWorld(), chest.getX(), chest.getY(), chest.getZ() + 1);
+			if (spawnLocation == null) {
+				spawnLocation = ChestStorage.getSpawnLocation(chest);
 			}
 			if (spawnLocation != null && chest.contains(minecartType)) {
 				if (chest.canSpawnMinecart() && chest.removeItem(minecartType.getId())) {

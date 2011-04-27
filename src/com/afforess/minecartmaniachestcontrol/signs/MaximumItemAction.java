@@ -31,7 +31,7 @@ public class MaximumItemAction implements SignAction{
 
 	@Override
 	public boolean valid(Sign sign) {
-		if (sign.getLine(0).contains("max items")) {
+		if (sign.getLine(0).toLowerCase().contains("max item")) {
 			sign.addBrackets();
 			return true;
 		}

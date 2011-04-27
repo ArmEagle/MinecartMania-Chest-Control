@@ -31,7 +31,7 @@ public class MinimumItemAction implements SignAction{
 
 	@Override
 	public boolean valid(Sign sign) {
-		if (sign.getLine(0).contains("min items")) {
+		if (sign.getLine(0).toLowerCase().contains("min item")) {
 			sign.addBrackets();
 			return true;
 		}
