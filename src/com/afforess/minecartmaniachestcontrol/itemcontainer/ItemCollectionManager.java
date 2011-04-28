@@ -100,7 +100,7 @@ public class ItemCollectionManager {
 	
 	public static ArrayList<ItemContainer> getItemContainers(Location location, CompassDirection direction, boolean collection) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
-		ArrayList<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
+		HashSet<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
 		HashSet<Block> toSkip = new HashSet<Block>();
 		for (Block block : blocks) {
 			if (getMinecartManiaInventory(block) != null && !toSkip.contains(block)) {
@@ -150,7 +150,7 @@ public class ItemCollectionManager {
 	
 	public static ArrayList<ItemContainer> getFurnaceContainers(Location location, CompassDirection direction) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
-		ArrayList<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
+		HashSet<Block> blocks = BlockUtils.getAdjacentBlocks(location, 1);
 		for (Block block : blocks) {
 			if (getMinecartManiaInventory(block) != null && getMinecartManiaInventory(block) instanceof MinecartManiaFurnace) {
 				MinecartManiaFurnace furnace = (MinecartManiaFurnace)getMinecartManiaInventory(block);

@@ -1,6 +1,7 @@
 package com.afforess.minecartmaniachestcontrol;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -100,7 +101,7 @@ public abstract class ChestStorage {
 	}
 
 	public static void doItemCompression(MinecartManiaStorageCart minecart) {
-		ArrayList<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
+		HashSet<Block> blockList = minecart.getAdjacentBlocks(minecart.getRange());
 		for (Block block : blockList) {
 			if (block.getTypeId() == Item.WORKBENCH.getId()) {
 				ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(block.getLocation(), 2);

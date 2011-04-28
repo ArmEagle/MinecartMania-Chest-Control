@@ -21,9 +21,9 @@ import com.afforess.minecartmaniacore.event.MinecartManiaListener;
 import com.afforess.minecartmaniacore.event.MinecartManiaSignFoundEvent;
 import com.afforess.minecartmaniacore.signs.Sign;
 import com.afforess.minecartmaniacore.signs.SignAction;
+import com.afforess.minecartmaniacore.utils.BlockUtils;
 import com.afforess.minecartmaniacore.utils.ComparableLocation;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
-import com.afforess.minecartmaniacore.utils.BlockUtils;
 
 public class MinecartManiaActionListener extends MinecartManiaListener{
 	

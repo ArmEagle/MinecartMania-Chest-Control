@@ -3,6 +3,8 @@ package com.afforess.minecartmaniachestcontrol;
 import java.util.ArrayList;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 
 import com.afforess.minecartmaniacore.Item;
 import com.afforess.minecartmaniacore.MinecartManiaChest;
@@ -57,54 +59,35 @@ public class SignCommands {
 
 	public static Location getSpawnLocationSignOverride(MinecartManiaChest chest) {
 		ArrayList<Sign> signList = SignUtils.getAdjacentMinecartManiaSignList(chest.getLocation(), 2);
-		Location spawn = chest.getChest().getBlock().getLocation();
+		Location spawn = chest.getLocation();
+		Location result = null;
+		Block neighbor = chest.getNeighborChest() != null ? chest.getNeighborChest().getLocation().getBlock() : null;
 
 		for (Sign sign : signList) {
 			for (int i = 0; i < sign.getNumLines(); i++) {
 				if (sign.getLine(i).toLowerCase().contains("spawn north")) {
 					sign.setLine(i, "[Spawn North]");
-					spawn.setX(spawn.getX() - 1);
-					//this may be the wrong end of a double chest, keep trying
-					if (!MinecartUtils.isTrack(spawn)) {
-						spawn.setX(spawn.getX() - 1);
-					}
-					if (!MinecartUtils.isTrack(spawn)) {
-						return null;
-					}
-					return spawn;
+					result = getAdjacentTrack(spawn.getBlock(), BlockFace.NORTH);
+					if (result == null && neighbor != null) return getAdjacentTrack(neighbor, BlockFace.NORTH);
+					else return result;
 				}
 				if (sign.getLine(i).toLowerCase().contains("spawn east")) {
 					sign.setLine(i, "[Spawn East]");
-					spawn.setZ(spawn.getZ() - 1);
-					if (!MinecartUtils.isTrack(spawn)) {
-						spawn.setZ(spawn.getZ() - 1);
-					}
-					if (!MinecartUtils.isTrack(spawn)) {
-						return null;
-					}
-					return spawn;
+					result = getAdjacentTrack(spawn.getBlock(), BlockFace.EAST);
+					if (result == null && neighbor != null) return getAdjacentTrack(neighbor, BlockFace.EAST);
+					else return result;
 				}
 				if (sign.getLine(i).toLowerCase().contains("spawn south")) {
 					sign.setLine(i, "[Spawn South]");
-					spawn.setX(spawn.getX() + 1);
-					if (!MinecartUtils.isTrack(spawn)) {
-						spawn.setX(spawn.getX() + 1);
-					}
-					if (!MinecartUtils.isTrack(spawn)) {
-						return null;
-					}
-					return spawn;
+					result = getAdjacentTrack(spawn.getBlock(), BlockFace.SOUTH);
+					if (result == null && neighbor != null) return getAdjacentTrack(neighbor, BlockFace.SOUTH);
+					else return result;
 				}
 				if (sign.getLine(i).toLowerCase().contains("spawn west")) {
 					sign.setLine(i, "[Spawn West]");
-					spawn.setZ(spawn.getZ() + 1);
-					if (!MinecartUtils.isTrack(spawn)) {
-						spawn.setZ(spawn.getZ() + 1);
-					}
-					if (!MinecartUtils.isTrack(spawn)) {
-						return null;
-					}
-					return spawn;
+					result = getAdjacentTrack(spawn.getBlock(), BlockFace.WEST);
+					if (result == null && neighbor != null) return getAdjacentTrack(neighbor, BlockFace.WEST);
+					else return result;
 				}
 			}
 		}
@@ -112,7 +95,17 @@ public class SignCommands {
 		
 		return null;
 	}
-
+	
+	private static Location getAdjacentTrack(Block center, BlockFace dir) {
+		if (MinecartUtils.isTrack(center.getFace(dir))) {
+			return center.getFace(dir).getLocation();
+		}
+		if (center.getFace(dir).getTypeId() == Item.CHEST.getId() && MinecartUtils.isTrack(center.getFace(dir).getFace(dir))) {
+			return center.getFace(dir).getFace(dir).getLocation();
+		}
+		return null;
+	}
+	
 	public static CompassDirection getDirection(Location loc1,	Location loc2) {
 		if (loc1.getBlockX() - loc2.getBlockX() > 0) {
 			return CompassDirection.NORTH;
