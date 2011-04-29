@@ -3,11 +3,9 @@ package com.afforess.minecartmaniachestcontrol.itemcontainer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmaniacore.AbstractItem;
-import com.afforess.minecartmaniacore.MinecartManiaChest;
 import com.afforess.minecartmaniacore.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
@@ -25,11 +23,6 @@ public class ItemDepositContainer extends GenericItemContainer implements ItemCo
 		MinecartManiaLogger.getInstance().debug("Processing Deposit Sign. Text: "  + this.line);
 		@SuppressWarnings("unchecked")
 		ArrayList<AbstractItem> rawList = (ArrayList<AbstractItem>) ListUtils.toArrayList(Arrays.asList(getRawItemList()));
-		Player owner = null;
-		if (deposit instanceof MinecartManiaChest) {
-			owner = ((MinecartManiaChest)deposit).getOwner();
-		}
-		
 		for (CompassDirection direction : directions) {
 			AbstractItem[] list = getItemList(direction);
 			for (AbstractItem item : list) {
@@ -41,7 +34,7 @@ public class ItemDepositContainer extends GenericItemContainer implements ItemCo
 						if (!inventory.canRemoveItem(itemStack.getTypeId(), toAdd, itemStack.getDurability())) {
 							break; //if we are not allowed to remove the items, give up
 						}
-						else if (!deposit.addItem(new ItemStack(itemStack.getTypeId(), toAdd, itemStack.getDurability()), owner)) {
+						else if (!deposit.addItem(new ItemStack(itemStack.getTypeId(), toAdd, itemStack.getDurability()))) {
 							break;
 						}
 						inventory.removeItem(itemStack.getTypeId(), toAdd, itemStack.getDurability());
