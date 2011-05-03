@@ -6,9 +6,9 @@ import java.util.Arrays;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmaniacore.AbstractItem;
-import com.afforess.minecartmaniacore.MinecartManiaChest;
-import com.afforess.minecartmaniacore.MinecartManiaInventory;
+import com.afforess.minecartmaniacore.world.AbstractItem;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaChest;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 import com.afforess.minecartmaniacore.utils.ListUtils;

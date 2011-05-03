@@ -1,8 +1,8 @@
 package com.afforess.minecartmaniachestcontrol.signs;
 
-import com.afforess.minecartmaniacore.AbstractItem;
-import com.afforess.minecartmaniacore.MinecartManiaMinecart;
-import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
+import com.afforess.minecartmaniacore.world.AbstractItem;
+import com.afforess.minecartmaniacore.minecart.MinecartManiaMinecart;
+import com.afforess.minecartmaniacore.minecart.MinecartManiaStorageCart;
 import com.afforess.minecartmaniacore.signs.Sign;
 import com.afforess.minecartmaniacore.signs.SignAction;
 import com.afforess.minecartmaniacore.utils.ItemUtils;

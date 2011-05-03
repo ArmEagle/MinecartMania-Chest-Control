@@ -6,8 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
-import com.afforess.minecartmaniacore.Item;
-import com.afforess.minecartmaniacore.MinecartManiaChest;
+import com.afforess.minecartmaniacore.world.Item;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaChest;
 import com.afforess.minecartmaniacore.signs.MinecartTypeSign;
 import com.afforess.minecartmaniacore.signs.Sign;
 import com.afforess.minecartmaniacore.utils.MinecartUtils;

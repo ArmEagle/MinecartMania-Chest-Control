@@ -2,7 +2,7 @@ package com.afforess.minecartmaniachestcontrol.itemcontainer;
 
 import java.util.HashSet;
 
-import com.afforess.minecartmaniacore.AbstractItem;
+import com.afforess.minecartmaniacore.world.AbstractItem;
 import com.afforess.minecartmaniacore.utils.ItemUtils;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 

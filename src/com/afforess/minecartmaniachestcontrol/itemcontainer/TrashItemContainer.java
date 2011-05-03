@@ -5,8 +5,8 @@ import java.util.Arrays;
 
 import org.bukkit.inventory.ItemStack;
 
-import com.afforess.minecartmaniacore.AbstractItem;
-import com.afforess.minecartmaniacore.MinecartManiaInventory;
+import com.afforess.minecartmaniacore.world.AbstractItem;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.utils.ListUtils;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 

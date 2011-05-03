@@ -1,9 +1,9 @@
 package com.afforess.minecartmaniachestcontrol.itemcontainer;
 
-import com.afforess.minecartmaniacore.AbstractItem;
-import com.afforess.minecartmaniacore.Item;
-import com.afforess.minecartmaniacore.MinecartManiaFurnace;
-import com.afforess.minecartmaniacore.MinecartManiaInventory;
+import com.afforess.minecartmaniacore.world.AbstractItem;
+import com.afforess.minecartmaniacore.world.Item;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaFurnace;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaInventory;
 import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 
 public class FurnaceSmeltContainer extends GenericItemContainer implements ItemContainer{

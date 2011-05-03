@@ -13,12 +13,12 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 
-import com.afforess.minecartmaniacore.MinecartManiaChest;
-import com.afforess.minecartmaniacore.MinecartManiaDoubleChest;
-import com.afforess.minecartmaniacore.MinecartManiaFurnace;
-import com.afforess.minecartmaniacore.MinecartManiaInventory;
-import com.afforess.minecartmaniacore.MinecartManiaStorageCart;
-import com.afforess.minecartmaniacore.MinecartManiaWorld;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaChest;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaDoubleChest;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaFurnace;
+import com.afforess.minecartmaniacore.inventory.MinecartManiaInventory;
+import com.afforess.minecartmaniacore.minecart.MinecartManiaStorageCart;
+import com.afforess.minecartmaniacore.world.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.debug.MinecartManiaLogger;
 import com.afforess.minecartmaniacore.utils.BlockUtils;
 import com.afforess.minecartmaniacore.utils.ComparableLocation;
