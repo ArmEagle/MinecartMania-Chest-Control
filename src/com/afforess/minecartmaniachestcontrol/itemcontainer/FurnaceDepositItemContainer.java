@@ -32,9 +32,12 @@ public class FurnaceDepositItemContainer extends GenericItemContainer implements
 					item.setAmount(toRemove);
 					if (furnace.canRemoveItem(item.getId(), toRemove, data)) {
 						if (deposit.canAddItem(item.toItemStack())) {
-							furnace.setItem(SLOT, null);
-							deposit.addItem(item.toItemStack());
-							return;
+							if (deposit.addItem(item.toItemStack())) {
+								furnace.setItem(SLOT, null);
+							}
+							else {
+								return;
+							}
 						}
 					}
 					
