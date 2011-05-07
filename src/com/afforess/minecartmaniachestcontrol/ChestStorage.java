@@ -116,7 +116,7 @@ public abstract class ChestStorage {
 								int amt = 0;
 								int slot = 0;
 								for (ItemStack item : minecart.getContents()) {
-									if (item != null && m.equals(item.getType())) {
+									if (item != null && m.equals(Item.getItem(item))) {
 										amt += item.getAmount();
 										minecart.setItem(slot, null);
 									}
@@ -126,10 +126,12 @@ public abstract class ChestStorage {
 								int left = amt % 9;
 								while (compressedAmt > 0) {
 									minecart.addItem(compressable[1][n].getId(), Math.min(64, compressedAmt));
-									compressedAmt -= 64;
+									compressedAmt -= Math.min(64, compressedAmt);
 								}
 								if (left > 0) {
-									minecart.addItem(compressable[0][n].getId(), left);
+									ItemStack item = compressable[0][n].toItemStack();
+									item.setAmount(left);
+									minecart.addItem(item);
 								}
 								
 								n++;
