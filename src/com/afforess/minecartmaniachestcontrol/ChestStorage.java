@@ -32,13 +32,25 @@ public abstract class ChestStorage {
 		if (MinecartUtils.isTrack(center.getRelative(-1, 0, 0))) {
 			return center.getRelative(-1, 0, 0).getLocation();
 		}
+		else if (MinecartUtils.isTrack(center.getRelative(-1, -1, 0)) && MinecartUtils.isSlopedTrack(center.getRelative(-1, -1, 0))) {
+			return center.getRelative(-1, 0, 0).getLocation();
+		}
 		if (MinecartUtils.isTrack(center.getRelative(0, 0, -1))) {
+			return center.getRelative(0, 0, -1).getLocation();
+		}
+		else if (MinecartUtils.isTrack(center.getRelative(0, -1, -1)) && MinecartUtils.isSlopedTrack(center.getRelative(0, -1, -1))) {
 			return center.getRelative(0, 0, -1).getLocation();
 		}
 		if (MinecartUtils.isTrack(center.getRelative(1, 0, 0))) {
 			return center.getRelative(1, 0, 0).getLocation();
 		}
+		else if (MinecartUtils.isTrack(center.getRelative(1, -1, 0)) && MinecartUtils.isSlopedTrack(center.getRelative(1, -1, 0))) {
+			return center.getRelative(1, 0, 0).getLocation();
+		}
 		if (MinecartUtils.isTrack(center.getRelative(0, 0, 1))) {
+			return center.getRelative(0, 0, 1).getLocation();
+		}
+		else if (MinecartUtils.isTrack(center.getRelative(0, -1, 1)) && MinecartUtils.isSlopedTrack(center.getRelative(0, -1, 1))) {
 			return center.getRelative(0, 0, 1).getLocation();
 		}
 		return null;
