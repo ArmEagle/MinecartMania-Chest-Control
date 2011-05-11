@@ -9,7 +9,7 @@ import com.afforess.minecartmaniacore.utils.DirectionUtils.CompassDirection;
 public class FurnaceDepositItemContainer extends GenericItemContainer implements ItemContainer{
 	private MinecartManiaFurnace furnace;
 	private static final int SLOT = 2;
-	public FurnaceDepositItemContainer(MinecartManiaFurnace furnace,String line, CompassDirection direction) {
+	public FurnaceDepositItemContainer(MinecartManiaFurnace furnace, String line, CompassDirection direction) {
 		super(line, direction);
 		this.furnace = furnace;
 	}

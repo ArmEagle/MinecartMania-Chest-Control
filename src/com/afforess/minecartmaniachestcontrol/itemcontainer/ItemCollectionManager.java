@@ -139,8 +139,8 @@ public class ItemCollectionManager {
 	
 	public static ArrayList<ItemContainer> getTrashItemContainers(Location location, CompassDirection direction) {
 		ArrayList<ItemContainer> containers = new ArrayList<ItemContainer>();
-		for (int line = 1; line < 4; line++) {
-			String text = ((Sign)location.getBlock().getState()).getLine(line);
+		ArrayList<String> lines = getItemLines(((Sign)location.getBlock().getState()));
+		for (String text : lines) {
 			if (!text.isEmpty() && !isFurnaceFuelLine(text) && !isFurnaceSmeltLine(text)) {
 				containers.add(new TrashItemContainer(text, direction));
 			}
