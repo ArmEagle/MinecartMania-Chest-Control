@@ -90,33 +90,10 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private HashSet<ComparableLocation> calculateLocationsInRange(MinecartManiaStorageCart minecart) {
-		HashSet<ComparableLocation> previousBlocks = null;
-		if (minecart.getDataValue("Previous Item Locations") != null) {
-			previousBlocks = (HashSet<ComparableLocation>)minecart.getDataValue("Previous Item Locations");
-		}
+		HashSet<ComparableLocation> previousBlocks = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.getPreviousLocation().toLocation(minecart.minecart.getWorld()), minecart.getItemRange()));
 		HashSet<ComparableLocation> current = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.minecart.getLocation(), minecart.getItemRange()));
-		if (previousBlocks != null) {
-			for (ComparableLocation loc : previousBlocks) {
-				current.remove(loc);
-			}
-		}
-		
-		if (previousBlocks != null) {
-			Iterator<ComparableLocation> i = previousBlocks.iterator();
-			while(i.hasNext()) {
-				Location temp = i.next();
-				if (temp.toVector().distance(minecart.minecart.getLocation().toVector()) > minecart.getItemRange()) {
-					i.remove();
-				}
-			}
-		}
-		else {
-			previousBlocks = new HashSet<ComparableLocation>();
-		}
-		previousBlocks.addAll(current);
-		minecart.setDataValue("Previous Item Locations", previousBlocks);
+		current.removeAll(previousBlocks);
 		return current;
 	}
 	
