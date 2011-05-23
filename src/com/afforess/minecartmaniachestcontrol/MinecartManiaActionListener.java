@@ -91,7 +91,7 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 	}
 	
 	private HashSet<ComparableLocation> calculateLocationsInRange(MinecartManiaStorageCart minecart) {
-		HashSet<ComparableLocation> previousBlocks = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.getPreviousLocation().toLocation(minecart.minecart.getWorld()), minecart.getItemRange()));
+		HashSet<ComparableLocation> previousBlocks = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.getPrevLocation(), minecart.getItemRange()));
 		HashSet<ComparableLocation> current = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.minecart.getLocation(), minecart.getItemRange()));
 		current.removeAll(previousBlocks);
 		return current;

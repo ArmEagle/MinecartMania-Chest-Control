@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.afforess.minecartmaniacore.world.AbstractItem;
@@ -25,9 +26,13 @@ public class ItemCollectionContainer extends GenericItemContainer implements Ite
 		MinecartManiaLogger.getInstance().debug("Processing Collection Sign. Text: "  + this.line);
 		@SuppressWarnings("unchecked")
 		ArrayList<AbstractItem> rawList = (ArrayList<AbstractItem>) ListUtils.toArrayList(Arrays.asList(getRawItemList()));
-		String owner = null;
+		Player owner = null;
+		String temp = null;
 		if (inventory instanceof MinecartManiaChest) {
-			owner = ((MinecartManiaChest)inventory).getOwner();
+			temp = ((MinecartManiaChest)inventory).getOwner();
+		}
+		if (temp != null) {
+			owner = Bukkit.getServer().getPlayer(temp);
 		}
 		for (CompassDirection direction : directions) {
 			AbstractItem[] list = getItemList(direction);
@@ -40,7 +45,7 @@ public class ItemCollectionContainer extends GenericItemContainer implements Ite
 						if (!withdraw.canRemoveItem(itemStack.getTypeId(), toAdd, itemStack.getDurability())) {
 							break; //if we are not allowed to remove the items, give up
 						}
-						else if (!inventory.addItem(new ItemStack(itemStack.getTypeId(), toAdd, itemStack.getDurability()), Bukkit.getServer().getPlayer(owner))) {
+						else if (!inventory.addItem(new ItemStack(itemStack.getTypeId(), toAdd, itemStack.getDurability()), owner)) {
 							break;
 						}
 						withdraw.removeItem(itemStack.getTypeId(), toAdd, itemStack.getDurability());
