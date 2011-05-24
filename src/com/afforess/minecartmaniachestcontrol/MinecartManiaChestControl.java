@@ -18,7 +18,7 @@ public class MinecartManiaChestControl extends JavaPlugin {
 	public void onEnable(){
 		server = this.getServer();
 		description = this.getDescription();
-		MinecartManiaConfigurationParser.read(description.getName() + "Configuration.xml", MinecartManiaCore.dataDirectory, new ChestControlSettingParser());
+		MinecartManiaConfigurationParser.read(description.getName() + "Configuration.xml", MinecartManiaCore.getDataDirectoryRelativePath(), new ChestControlSettingParser());
 		getServer().getPluginManager().registerEvent(Event.Type.CUSTOM_EVENT, listener, Priority.High, this);
 		log.info( description.getName() + " version " + description.getVersion() + " is enabled!" );
 	}
