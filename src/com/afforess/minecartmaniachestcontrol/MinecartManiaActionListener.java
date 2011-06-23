@@ -17,6 +17,7 @@ import com.afforess.minecartmaniacore.world.MinecartManiaWorld;
 import com.afforess.minecartmaniacore.event.ChestPoweredEvent;
 import com.afforess.minecartmaniacore.event.MinecartActionEvent;
 import com.afforess.minecartmaniacore.event.MinecartDirectionChangeEvent;
+import com.afforess.minecartmaniacore.event.MinecartElevatorEvent;
 import com.afforess.minecartmaniacore.event.MinecartManiaListener;
 import com.afforess.minecartmaniacore.event.MinecartManiaSignFoundEvent;
 import com.afforess.minecartmaniacore.signs.Sign;
@@ -59,6 +60,20 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			sign.addSignAction(test);
 		}
 	}
+	
+	public void onMinecartElevatorEvent(MinecartElevatorEvent event) {
+		if (!event.isCancelled()) {
+			final MinecartManiaMinecart minecart = event.getMinecart();
+			
+			if (minecart.isStorageMinecart()) {
+				ItemCollectionManager.processItemContainer((MinecartManiaStorageCart)event.getMinecart());
+				HashSet<ComparableLocation> locations = calculateLocationsInRange((MinecartManiaStorageCart)event.getMinecart(), event.getMinecart().getLocation(), event.getTeleportLocation());
+				findSigns(locations);
+				ItemCollectionManager.createItemContainers((MinecartManiaStorageCart)event.getMinecart(), locations);
+				ChestStorage.doItemCompression((MinecartManiaStorageCart) minecart);
+			}
+		}
+	}
 
 	public void onMinecartActionEvent(MinecartActionEvent event) {
 		if (!event.isActionTaken()) {
@@ -89,12 +104,16 @@ public class MinecartManiaActionListener extends MinecartManiaListener{
 			ItemCollectionManager.updateContainerDirections((MinecartManiaStorageCart)event.getMinecart());
 		}
 	}
-	
-	private HashSet<ComparableLocation> calculateLocationsInRange(MinecartManiaStorageCart minecart) {
-		HashSet<ComparableLocation> previousBlocks = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.getPrevLocation(), minecart.getItemRange()));
-		HashSet<ComparableLocation> current = toComparableLocation(BlockUtils.getAdjacentLocations(minecart.minecart.getLocation(), minecart.getItemRange()));
+	private HashSet<ComparableLocation> calculateLocationsInRange(MinecartManiaStorageCart minecart,
+																  Location prevLocation,
+																  Location curLocation) {
+		HashSet<ComparableLocation> previousBlocks = toComparableLocation(BlockUtils.getAdjacentLocations(prevLocation, minecart.getItemRange()));
+		HashSet<ComparableLocation> current = toComparableLocation(BlockUtils.getAdjacentLocations(curLocation, minecart.getItemRange()));
 		current.removeAll(previousBlocks);
 		return current;
+	}
+	private HashSet<ComparableLocation> calculateLocationsInRange(MinecartManiaStorageCart minecart) {
+		return calculateLocationsInRange(minecart, minecart.getPrevLocation(), minecart.minecart.getLocation());
 	}
 	
 	private static HashSet<ComparableLocation> toComparableLocation(HashSet<Location> set) {
